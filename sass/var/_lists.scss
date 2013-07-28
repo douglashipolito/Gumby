@@ -11,8 +11,11 @@ $ui-coloring:
 	success $success-color $success-hover-color;
 
 // UI Styling List
-$styling: metro $metro-radius, pretty $button-radius;
-
+$styling: ();
+@each $flavor in $ui-flavors {
+	$flavor-radius : if($flavor == metro, $metro-radius, $button-radius);
+	$styling: append($styling, $flavor $flavor-radius);
+}
 
 // Form field types 
 $field-types: text, email, password, numeric, search, combined, prepend, append, double;
