@@ -43,9 +43,13 @@ form {
   vertical-align: middle;
   // Font-size 16px for weird form style error
   font-size: 16px;
-  &.metro, .metro {
-    @include border-radius(0);
+
+  @if index( if(length($ui-flavors) > 1, $ui-flavors, ($ui-flavors, null)), metro) {
+    &.metro, .metro {
+      @include border-radius(0);
+    }
   }
+
   input, input[type="*"], textarea {
     max-width: 100%;
     width: 100%;
