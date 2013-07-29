@@ -218,27 +218,6 @@ form {
 
   @each $error in danger $danger-color, warning $warning-color, success $success-color {
     &.#{nth($error, 1)} {
-      &:after {
-        @if($icons != ""){
-          font-family: "#{$icons}";
-          @if nth($error, 1) == danger {
-            content: "#{$entypo-icon-cancel-circled}";
-          }
-          @if nth($error, 1) == warning {
-            content: "#{$entypo-icon-attention}";
-          }
-          @if nth($error, 1) == success {
-            content: "#{$entypo-icon-check}";
-          }
-        font-size: $norm;
-        position: absolute;
-        top: percentage((strip-units($base-font-size)) / 100) - 2;
-        right: 15px;
-        z-index: 999;
-        color: nth($error, 2);
-        }
-      }
-
       &.no-icon:after {
         display: none;
       }
@@ -265,6 +244,61 @@ form {
       input:-moz-placeholder, textarea:-moz-placeholder {
         color: nth($error, 2);
       }
+
+      @if($icons != "") {
+        @each $normalized-icon in $normalized-icons {  
+          @each $defined-icons in $icons-list {
+            @if nth($normalized-icon, 1) == nth($defined-icons, 1) {
+              $suffix-icon : "";
+              
+              @if $default-icon != nth($defined-icons, 1) {
+                $suffix-icon : #{"."}#{nth($defined-icons, 1)};;
+              }
+
+              @each $icon in nth($defined-icons, 2) {
+                $icon-loaded : false;
+                
+                @if nth($normalized-icon, 2) != null {
+                  @if length(nth($normalized-icon, 2)) == 1 {
+                    $icon-loaded : index((nth($normalized-icon, 2), null), nth($icon, 1));
+                  } @else {
+                    $icon-loaded : index(nth($normalized-icon, 2), nth($icon, 1));
+                  }
+                } @else {
+                  $icon-loaded : true;
+                }
+
+                @if $icon-loaded {
+                  $icon-found : false;
+        
+                  @if nth($icon, 1) == icon-cancel-circled and nth($error, 1) == danger {
+                    $icon-found : true;
+                  } @else if nth($icon, 1) == icon-attention and nth($error, 1) == warning {
+                    $icon-found : true;
+                  } @else if nth($icon, 1) == icon-check and nth($error, 1) == success {
+                    $icon-found : true;
+                  }
+                
+                  @if $icon-found == true {
+                    
+                    &#{$suffix-icon}:after {
+                      content: "#{nth($icon, 2)}";
+                      font-family: "#{nth($defined-icons, 1)}";
+                      font-size: $norm;
+                      position: absolute;
+                      top: percentage((strip-units($base-font-size)) / 100) - 2;
+                      right: 15px;
+                      z-index: 999;
+                      color: nth($error, 2);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
     }
   }
 
