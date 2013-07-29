@@ -1,6 +1,11 @@
 /* Icons */
+$icons-list : ();
 
 @import "../var/icons/entypo";
+
+//Set default icon(First position at list of icons)
+//Set each others icons
+$default-icon : if(length(nth($icons, 1)) > 1, nth(nth($icons, 1), 1), nth($icons, 1));
 
 [class^="icon-"] a:before,
 [class*=" icon-"] a:before,
@@ -8,7 +13,7 @@
 [class*=" icon-"] a:after,
 i[class^="icon-"],
 i[class*=" icon-"] {
-  font-family: "#{$icons}";
+  font-family: "#{$default-icon}";
   position:absolute;
   text-decoration:none;
   zoom: 1;
@@ -23,15 +28,73 @@ i[class*=" icon-"] {
   text-align: center;
 }
 
-@each $icon in $entypo-icons {
-  .#{nth($icon, 1)} {
-    &.icon-left a:before, &.icon-right a:after {
-      content: "#{nth($icon, 2)}";
-      height: inherit;
+@each $icon in $icons {  
+  @if $default-icon != nth($icon, 1) {
+    [class^="icon-#{nth($icon, 1)}"] a:before,
+    [class*=" icon-#{nth($icon, 1)}"] a:before,
+    [class^="icon-#{nth($icon, 1)}"] a:after,
+    [class*=" icon-#{nth($icon, 1)}"] a:after,
+    i[class^="icon-#{nth($icon, 1)}"],
+    i[class*=" icon-#{nth($icon, 1)}"] {
+      font-family: "#{nth($icon, 1)}";
+      position:absolute;
+      text-decoration:none;
+      zoom: 1;
+    }
+
+    i[class^="icon-#{nth($icon, 1)}"],
+    i[class*=" icon-#{nth($icon, 1)}"] {
+      display: inline-block;
+      position: static;
+      min-width: 20px;
+      margin: 0 5px;
+      text-align: center;
     }
   }
-  i.#{nth($icon, 1)}:before {
-    content: "#{nth($icon, 2)}";
-    height: inherit;
+}
+
+$normalized-icons : ();
+
+@each $defined-icons in $icons-list {
+  @each $icon in $icons {
+    $icon : if(length($icon) > 1, $icon, ($icon (null)));
+    $icon : if(length(nth($icon, 2)) > 1, $icon, ($icon));
+    @if nth($defined-icons, 1) == nth($icon, 1) {
+      $normalized-icons : append($normalized-icons, $icon);
+    }
   }
 }
+
+@each $normalized-icon in $normalized-icons {
+  
+  //Defines glyphs
+  @each $defined-icons in $icons-list {
+    @if nth($normalized-icon, 1) == nth($defined-icons, 1) {
+      $suffix-icon : "";
+      
+      @if $default-icon != nth($defined-icons, 1) {
+        $suffix-icon : #{"."}#{nth($defined-icons, 1)};;
+      }
+      
+      @each $icon in nth($defined-icons, 2) {
+        $test-icon : if(length(nth($normalized-icon, 2)) > 1, (nth($normalized-icon, 2), null), ($normalized-icon, null));
+        
+        @if index(nth($test-icon, 1), nth($icon, 1)) or nth($normalized-icon, 2) == null {
+          
+          .#{nth($icon, 1)}#{$suffix-icon} {
+            &.icon-left a:before, &.icon-right a:after {
+              content: "#{nth($icon, 2)}";
+              height: inherit;
+            }
+          }
+
+          i.#{nth($icon, 1)}#{$suffix-icon}:before {
+            content: "#{nth($icon, 2)}";
+            height: inherit;
+          }
+        }
+      }
+    }
+  }
+}
+    
