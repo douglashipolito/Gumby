@@ -4,7 +4,6 @@ $icons-list : ();
 @import "../var/icons/entypo";
 
 //Set default icon(First position at list of icons)
-//Set each others icons
 $default-icon : if(length(nth($icons, 1)) > 1, nth(nth($icons, 1), 1), nth($icons, 1));
 
 [class^="icon-"] a:before,
@@ -28,6 +27,7 @@ i[class*=" icon-"] {
   text-align: center;
 }
 
+//Defines the other icons
 @each $icon in $icons {  
   @if $default-icon != nth($icon, 1) {
     [class^="icon-#{nth($icon, 1)}"] a:before,
@@ -67,7 +67,7 @@ $normalized-icons : ();
 
 @each $normalized-icon in $normalized-icons {
   
-  //Defines glyphs
+  //Defines the glyphs
   @each $defined-icons in $icons-list {
     @if nth($normalized-icon, 1) == nth($defined-icons, 1) {
       $suffix-icon : "";
